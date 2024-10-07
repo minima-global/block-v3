@@ -7,15 +7,14 @@ import { appContext } from '../AppContext.tsx'
 import StatsCard from '../Components/StatsCard.tsx'
 import LatestBlocks from '../Components/LatestBlocks.tsx'
 import LatestTransactions from '../Components/LatestTransactions.tsx'
-import useNumberOfTxPows from '../hooks/useNumberOfTxPows.ts'
 
 export const Route = createFileRoute('/')({
   component: Index,
 })
 
 function Index() {
-  const { topBlock, totalSupply } = useContext(appContext)
-  const { isFetching, last24Hours } = useNumberOfTxPows()
+  const { topBlock, totalSupply, transactionsInLast24Hours } =
+    useContext(appContext)
 
   const DISPLAYED_STATS = [
     {
@@ -56,9 +55,9 @@ function Index() {
           />
         </svg>
       ),
-      title: "TxPow's in the last day",
-      value: last24Hours,
-      isLoading: isFetching,
+      title: 'Transactions in the last day',
+      value: transactionsInLast24Hours,
+      isLoading: transactionsInLast24Hours === null,
     },
     {
       id: 'block_height',
@@ -93,6 +92,24 @@ function Index() {
       value: topBlock,
       isLoading: topBlock === null,
     },
+    {
+      id: 'average_block_time',
+      icon: (
+        <svg
+          width="20"
+          height="22"
+          viewBox="0 0 20 22"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="fill-black dark:fill-white"
+        >
+          <path d="M15.4423 16.7267V13.9615H14.5577V17.0845L16.65 19.177L17.273 18.5537L15.4423 16.7267ZM8.84625 2.08647L2.825 5.56922L9 9.13847L15.175 5.56922L9.15375 2.08647C9.10258 2.05447 9.05133 2.03847 9 2.03847C8.94867 2.03847 8.89742 2.05447 8.84625 2.08647ZM0.5 13.7922V6.20772C0.5 5.87956 0.579083 5.57897 0.73725 5.30597C0.895417 5.03297 1.11767 4.81306 1.404 4.64622L8.09625 0.794225C8.25008 0.710891 8.398 0.649057 8.54 0.608723C8.682 0.568223 8.83517 0.547974 8.9995 0.547974C9.164 0.547974 9.3215 0.568223 9.472 0.608723C9.62267 0.649057 9.76658 0.710891 9.90375 0.794225L16.596 4.64622C16.8823 4.81306 17.1046 5.03297 17.2628 5.30597C17.4209 5.57897 17.5 5.87956 17.5 6.20772V9.92298H16V6.81148L8.975 10.8615L2 6.81148V13.777C2 13.8281 2.01283 13.8762 2.0385 13.9212C2.06417 13.9661 2.10258 14.0045 2.15375 14.0365L8.30775 17.6077V19.321L1.404 15.3537C1.11767 15.1869 0.895417 14.967 0.73725 14.694C0.579083 14.421 0.5 14.1204 0.5 13.7922ZM15 21.375C13.7513 21.375 12.6892 20.9371 11.8135 20.0615C10.9378 19.1858 10.5 18.1236 10.5 16.875C10.5 15.6263 10.9378 14.5641 11.8135 13.6885C12.6892 12.8128 13.7513 12.375 15 12.375C16.2487 12.375 17.3108 12.8128 18.1865 13.6885C19.0622 14.5641 19.5 15.6263 19.5 16.875C19.5 18.1236 19.0622 19.1858 18.1865 20.0615C17.3108 20.9371 16.2487 21.375 15 21.375Z" />
+        </svg>
+      ),
+      title: 'Number of blocks in the last day',
+      value: `1720 blocks`,
+      isLoading: false,
+    },
   ]
 
   return (
@@ -113,7 +130,7 @@ function Index() {
       <Section>
         <div className="mb-5 grid grid-cols-12 gap-3 lg:mb-10 lg:gap-6">
           {DISPLAYED_STATS.map((stats) => (
-            <StatsCard lgSpan={6} xlSpan={4} key={stats.title} {...stats} />
+            <StatsCard lgSpan={6} xlSpan={3} key={stats.title} {...stats} />
           ))}
         </div>
       </Section>

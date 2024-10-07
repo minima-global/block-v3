@@ -87,7 +87,7 @@ function Index() {
         </svg>
       ),
       title: 'Number of blocks in the last day',
-      value: `X Blocks`,
+      value: `1720 Blocks`,
     },
     {
       id: 'average_block_time',
@@ -104,7 +104,7 @@ function Index() {
         </svg>
       ),
       title: 'Average block time',
-      value: `x seconds`,
+      value: `50 seconds`,
       isLoading: false,
     },
   ]
@@ -115,7 +115,7 @@ function Index() {
         className={`${page === 1 ? 'visible scale-100 pb-0' : 'invisible h-0 scale-0 pb-5 lg:pb-14'}`}
       >
         <Title title="Blocks" />
-        <Section className="-mt-6 lg:-mt-8 hidden">
+        <Section className="-mt-6 lg:-mt-8">
           <div className="mb-5 grid grid-cols-12 gap-3 lg:mb-10 lg:gap-6">
             {DISPLAYED_STATS.map((stats) => (
               <StatsCard key={stats.id} {...stats} />

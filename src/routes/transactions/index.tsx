@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { TxPow } from '../../types.ts'
 import Section from '../../Components/Section.tsx'
 import Title from '../../Components/Title.tsx'
@@ -12,6 +12,7 @@ import { format } from 'timeago.js'
 import { getTransactions } from '../../__minima__'
 import PerPage from '../../Components/PerPage.tsx'
 import Paginator from '../../Components/Paginator.tsx'
+import { appContext } from '../../AppContext.tsx'
 
 export const Route = createFileRoute('/transactions/')({
   component: Index,
@@ -24,6 +25,7 @@ function Index() {
   const [page, setPage] = useState(1)
   const [data, setData] = useState<TxPow[]>([])
   const [perPage, setPerPage] = useState(10)
+  const { transactionsInLast24Hours } = useContext(appContext)
 
   useEffect(() => {
     window.scrollTo({
@@ -59,27 +61,27 @@ function Index() {
         </svg>
       ),
       title: 'Transactions in the last day',
-      value: 'X',
+      value: transactionsInLast24Hours,
       isLoading: false,
     },
-    {
-      id: 'txns_in_last_week',
-      icon: (
-        <svg
-          width="18"
-          height="20"
-          viewBox="0 0 18 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="fill-black dark:fill-white"
-        >
-          <path d="M9 19.5C8.83583 19.5 8.68008 19.4782 8.53275 19.4345C8.38525 19.391 8.24617 19.3308 8.1155 19.2538L1.38475 15.3635C1.10008 15.1993 0.8815 14.9808 0.729 14.7078C0.576333 14.4346 0.5 14.1371 0.5 13.8152V6.18475C0.5 5.86292 0.576333 5.56542 0.729 5.29225C0.8815 5.01925 1.10008 4.80067 1.38475 4.6365L8.1155 0.746249C8.24617 0.669249 8.38525 0.609 8.53275 0.5655C8.68008 0.521833 8.83583 0.5 9 0.5C9.15767 0.5 9.31025 0.521833 9.45775 0.5655C9.60508 0.609 9.74733 0.669249 9.8845 0.746249L16.6152 4.6365C16.8936 4.80067 17.1106 5.01925 17.2663 5.29225C17.4221 5.56542 17.5 5.86292 17.5 6.18475V13.8152C17.5 14.1371 17.4221 14.4346 17.2663 14.7078C17.1106 14.9808 16.8936 15.1993 16.6152 15.3635L9.8845 19.2538C9.74733 19.3308 9.60508 19.391 9.45775 19.4345C9.31025 19.4782 9.15767 19.5 9 19.5ZM5.3365 13.673V10.75H2V13.7962C2 13.8474 2.01283 13.8955 2.0385 13.9405C2.06417 13.9853 2.10258 14.0238 2.15375 14.0557L8.25 17.6077V13.673H5.3365ZM5.3365 6.327H8.25V2.39225L2.15375 5.94425C2.10258 5.97625 2.06417 6.01467 2.0385 6.0595C2.01283 6.1045 2 6.15258 2 6.20375V9.25H5.3365V6.327ZM6.8365 12.173H11.1538V7.8365H6.8365V12.173ZM12.6538 13.673H9.75V17.6077L15.8462 14.0557C15.8974 14.0238 15.9358 13.9853 15.9615 13.9405C15.9872 13.8955 16 13.8474 16 13.7962V10.75H12.6538V13.673ZM12.6538 6.327V9.25H16V6.20375C16 6.15258 15.9872 6.1045 15.9615 6.0595C15.9358 6.01467 15.8974 5.97625 15.8462 5.94425L9.75 2.39225V6.327H12.6538Z" />
-        </svg>
-      ),
-      title: 'Transactions in the last week',
-      value: 'X',
-      isLoading: false,
-    },
+    // {
+    //   id: 'txns_in_last_week',
+    //   icon: (
+    //     <svg
+    //       width="18"
+    //       height="20"
+    //       viewBox="0 0 18 20"
+    //       fill="none"
+    //       xmlns="http://www.w3.org/2000/svg"
+    //       className="fill-black dark:fill-white"
+    //     >
+    //       <path d="M9 19.5C8.83583 19.5 8.68008 19.4782 8.53275 19.4345C8.38525 19.391 8.24617 19.3308 8.1155 19.2538L1.38475 15.3635C1.10008 15.1993 0.8815 14.9808 0.729 14.7078C0.576333 14.4346 0.5 14.1371 0.5 13.8152V6.18475C0.5 5.86292 0.576333 5.56542 0.729 5.29225C0.8815 5.01925 1.10008 4.80067 1.38475 4.6365L8.1155 0.746249C8.24617 0.669249 8.38525 0.609 8.53275 0.5655C8.68008 0.521833 8.83583 0.5 9 0.5C9.15767 0.5 9.31025 0.521833 9.45775 0.5655C9.60508 0.609 9.74733 0.669249 9.8845 0.746249L16.6152 4.6365C16.8936 4.80067 17.1106 5.01925 17.2663 5.29225C17.4221 5.56542 17.5 5.86292 17.5 6.18475V13.8152C17.5 14.1371 17.4221 14.4346 17.2663 14.7078C17.1106 14.9808 16.8936 15.1993 16.6152 15.3635L9.8845 19.2538C9.74733 19.3308 9.60508 19.391 9.45775 19.4345C9.31025 19.4782 9.15767 19.5 9 19.5ZM5.3365 13.673V10.75H2V13.7962C2 13.8474 2.01283 13.8955 2.0385 13.9405C2.06417 13.9853 2.10258 14.0238 2.15375 14.0557L8.25 17.6077V13.673H5.3365ZM5.3365 6.327H8.25V2.39225L2.15375 5.94425C2.10258 5.97625 2.06417 6.01467 2.0385 6.0595C2.01283 6.1045 2 6.15258 2 6.20375V9.25H5.3365V6.327ZM6.8365 12.173H11.1538V7.8365H6.8365V12.173ZM12.6538 13.673H9.75V17.6077L15.8462 14.0557C15.8974 14.0238 15.9358 13.9853 15.9615 13.9405C15.9872 13.8955 16 13.8474 16 13.7962V10.75H12.6538V13.673ZM12.6538 6.327V9.25H16V6.20375C16 6.15258 15.9872 6.1045 15.9615 6.0595C15.9358 6.01467 15.8974 5.97625 15.8462 5.94425L9.75 2.39225V6.327H12.6538Z" />
+    //     </svg>
+    //   ),
+    //   title: 'Transactions in the last week',
+    //   value: 'X',
+    //   isLoading: false,
+    // },
   ]
 
   const columnClassNames = {
@@ -116,10 +118,10 @@ function Index() {
         className={`${page === 1 ? 'visible scale-100 pb-0' : 'invisible h-0 scale-0 pb-5 lg:pb-14'}`}
       >
         <Title title="Transactions" />
-        <Section className="-mt-6 lg:-mt-8 hidden">
+        <Section className="-mt-6 lg:-mt-8">
           <div className="mb-5 grid grid-cols-12 gap-3 lg:mb-10 lg:gap-6">
             {DISPLAYED_STATS.map((stats) => (
-              <StatsCard key={stats.title} {...stats} span={6} />
+              <StatsCard key={stats.title} {...stats} span={12} />
             ))}
           </div>
         </Section>

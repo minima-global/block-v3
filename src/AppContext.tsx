@@ -11,12 +11,14 @@ export const appContext = createContext<{
   totalSupply: string | null
   loaded: boolean
   hamburgerOpen: boolean
+  transactionsInLast24Hours: number | null
   setHamburgerOpen: React.Dispatch<SetStateAction<boolean>>
 }>({
   totalSupply: null,
   topBlock: null,
   loaded: false,
   hamburgerOpen: false,
+  transactionsInLast24Hours: null,
   setHamburgerOpen: () => null,
 })
 
@@ -28,6 +30,8 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [topBlock, setTopBlock] = useState<string | null>(null)
   const [totalSupply, setTotalSupply] = useState<string | null>(null)
   const [hamburgerOpen, setHamburgerOpen] = useState<boolean>(false)
+  const [transactionsInLast24Hours, setTransactionsInLast24Hours] =
+    useState(null)
 
   useEffect(() => {
     if (!loaded.current) {
@@ -38,6 +42,10 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           MDS.cmd('status', (res) => {
             setTopBlock(res.response.chain.block)
             setTotalSupply(Number(res.response.minima).toFixed(0))
+          })
+
+          MDS.cmd('history action:transactions depth:1720', (res) => {
+            setTransactionsInLast24Hours(res.response.transactions)
           })
         }
 
@@ -55,6 +63,7 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         totalSupply,
         hamburgerOpen,
         setHamburgerOpen,
+        transactionsInLast24Hours,
         loaded: loaded.current,
       }}
     >
