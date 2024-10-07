@@ -1,5 +1,10 @@
 # Changelog
 
+##### [3.2.0] - 07 October 24
+
+- Dashboard now shows total transaction count for the last 24 hours
+- Description fixed
+
 ##### [3.1.0] - 24 September 24
 
 - Dashboard now shows transactions
