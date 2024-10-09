@@ -1,7 +1,8 @@
 {
   "name": "block",
   "private": true,
-  "version": "3.2.0",
+  "description": "Explore the Minima blockchain",
+  "version": "3.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

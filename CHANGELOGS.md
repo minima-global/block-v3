@@ -1,5 +1,10 @@
 # Changelog
 
+##### [3.2.1] - 09 October 24
+
+- Fixed issue where searching for block number did not return results correctly
+- Fixed Minidapp description
+
 ##### [3.2.0] - 07 October 24
 
 - Dashboard now shows total transaction count for the last 24 hours

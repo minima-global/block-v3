@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import Title from '../Components/Title.tsx'
 import Section from '../Components/Section.tsx'
-import { useEffect, useState } from 'react'
+import {useContext, useEffect, useState} from 'react'
 import ArrowBack from '../Components/ArrowBack.tsx'
 import { default as SearchInput } from '../Components/Search.tsx'
 import { z } from 'zod'
@@ -9,9 +9,10 @@ import { txPow, txPowByAddress, txPowById } from '../__minima__'
 import { formatDate } from 'date-fns'
 import { getTextSnippet } from '../utils'
 import { TxPow } from '../types.ts'
+import {appContext} from "../AppContext.tsx";
 
 const searchSchema = z.object({
-  q: z.string(),
+  q: z.string().or(z.number()),
 })
 
 export const Route = createFileRoute('/search')({
@@ -20,51 +21,54 @@ export const Route = createFileRoute('/search')({
 })
 
 function Search() {
+  const { loaded } = useContext(appContext);
   const [isFetching, setIsFetching] = useState(true)
   const [data, setData] = useState<TxPow | null>(null)
   const { q } = Route.useSearch()
 
   useEffect(() => {
-    const currentQRef = q
+    if (loaded) {
+        const currentQRef = String(q);
 
-    setIsFetching(true)
+        setIsFetching(true)
 
-    if (currentQRef.includes('0x') || currentQRef.includes('Mx')) {
-      txPowById(currentQRef)
-        .then((response) => {
-          setData(response)
-          setIsFetching(false)
-        })
-        .catch(() => {
-          txPowByAddress(currentQRef)
-            .then((response) => {
-              // search by address is returned as an array so only
-              // set search results if the array count is higher than 0
-              if (Array.isArray(response)) {
-                setData(response[0])
-                setIsFetching(false)
-              } else {
-                setData(null)
-                setIsFetching(false)
-              }
-            })
-            .catch(() => {
-              setData(null)
-              setIsFetching(false)
-            })
-        })
-    } else {
-      txPow(currentQRef)
-        .then((response) => {
-          setData(response)
-          setIsFetching(false)
-        })
-        .catch(() => {
-          setData(null)
-          setIsFetching(false)
-        })
+        if (currentQRef && currentQRef.includes('0x') || currentQRef && currentQRef.includes('Mx')) {
+            txPowById(currentQRef)
+                .then((response) => {
+                    setData(response)
+                    setIsFetching(false)
+                })
+                .catch(() => {
+                    txPowByAddress(currentQRef)
+                        .then((response) => {
+                            // search by address is returned as an array so only
+                            // set search results if the array count is higher than 0
+                            if (Array.isArray(response)) {
+                                setData(response[0])
+                                setIsFetching(false)
+                            } else {
+                                setData(null)
+                                setIsFetching(false)
+                            }
+                        })
+                        .catch(() => {
+                            setData(null)
+                            setIsFetching(false)
+                        })
+                })
+        } else {
+            txPow(currentQRef)
+                .then((response) => {
+                    setData(response)
+                    setIsFetching(false)
+                })
+                .catch(() => {
+                    setData(null)
+                    setIsFetching(false)
+                })
+        }
     }
-  }, [q])
+  }, [q, loaded])
 
   return (
     <div>
@@ -78,7 +82,7 @@ function Search() {
       <Section className="-mt-6 lg:-mt-8">
         <div className="mb-8 flex w-full items-center justify-start">
           <div className="w-full lg:max-w-[900px] mx-auto">
-            <SearchInput sizing="large" exisitingValue={q} />
+            <SearchInput sizing="large" exisitingValue={String(q)} />
           </div>
         </div>
       </Section>
