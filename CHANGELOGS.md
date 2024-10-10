@@ -1,5 +1,9 @@
 # Changelog
 
+##### [3.2.2] - 10 October 24
+
+- You can now view transaction data on a block if it's available
+
 ##### [3.2.1] - 09 October 24
 
 - Fixed issue where searching for block number did not return results correctly

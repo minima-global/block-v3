@@ -199,7 +199,7 @@ function Index() {
                   },
                   {
                     title: 'Outputs',
-                    value: `${data?.body?.txn.outputs.length} input${
+                    value: `${data?.body?.txn.outputs.length} output${
                       data?.body?.txn.outputs.length &&
                       data?.body?.txn.outputs.length > 1
                         ? 's'
@@ -577,7 +577,7 @@ function Index() {
         <Section className="mb-12 mt-5">
           <div className="rounded bg-grey10 text-black dark:bg-darkContrast dark:text-grey20">
             <div className="h-fit p-6">
-              <div className="-mb-2 flex items-center gap-2 text-sm">
+              <div className="-mb-2 w-full flex items-center gap-2 text-sm">
                 <pre className="w-full whitespace-break-spaces break-all text-xs">
                   {data &&
                     JSON.stringify(
