@@ -1,5 +1,9 @@
 # Changelog
 
+##### [3.2.3] - 1 November 24
+
+- Fixed missing category in dapp.conf
+
 ##### [3.2.2] - 10 October 24
 
 - You can now view transaction data on a block if it's available
