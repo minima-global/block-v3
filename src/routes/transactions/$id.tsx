@@ -57,6 +57,8 @@ function Index() {
     },
   ]
 
+  const isPending = data?.onChain?.confirmations && Number(data.onChain.confirmations) < 3;
+
   return (
     <div>
       <Section className="mt-10 lg:mt-14">
@@ -70,7 +72,7 @@ function Index() {
       </Section>
       <Title title={`Txn ID. ${getTextSnippet(id)}`} />
       <Section className="-mt-4 mb-4 text-black lg:-mt-8 lg:mb-10 dark:text-grey80">
-        {data?.onChain && data.onChain && (
+        {data?.onChain && !isPending && (
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-3 border px-3 py-1.5 text-xs lg:text-sm dark:border-green-900 dark:bg-green-900 dark:bg-opacity-20">
               <span>Status:</span>
@@ -122,7 +124,7 @@ function Index() {
             </Link>
           </div>
         )}
-        {data && !data.onChain && (
+        {data && isPending && (
           <div className="flex w-fit items-center gap-3 border px-3 py-1.5 text-xs lg:text-sm dark:border-yellow-900 dark:bg-yellow-900 dark:bg-opacity-20">
             <span>Status:</span>
             <svg
@@ -168,17 +170,17 @@ function Index() {
                   {
                     title: 'Inputs',
                     value: `${data?.body?.txn.inputs.length} input${data?.body?.txn.inputs.length &&
-                        data?.body?.txn.inputs.length > 1
-                        ? 's'
-                        : ''
+                      data?.body?.txn.inputs.length > 1
+                      ? 's'
+                      : ''
                       }`,
                   },
                   {
                     title: 'Outputs',
                     value: `${data?.body?.txn.outputs.length} output${data?.body?.txn.outputs.length &&
-                        data?.body?.txn.outputs.length > 1
-                        ? 's'
-                        : ''
+                      data?.body?.txn.outputs.length > 1
+                      ? 's'
+                      : ''
                       }`,
                   },
                 ]}
@@ -189,9 +191,9 @@ function Index() {
       </Section>
       <Section>
         <div className="mb-6 hidden gap-10 text-xl lg:flex">
-          {TABS.map((tab) => (
+          {TABS.map((tab, index) => (
             <div
-              key={tab.title}
+              key={`${tab.title}-${index}`}
               onClick={() => setShowView(tab.title)}
               className={`cursor-pointer border-b-4 pb-1 ${tab.title === showView ? 'border-b-orange text-orange dark:border-b-lightOrange dark:text-lightOrange' : 'dark:text-white border-b-transparent'}`}
             >

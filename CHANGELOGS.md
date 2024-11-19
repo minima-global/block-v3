@@ -1,5 +1,9 @@
 # Changelog
 
+##### [3.3.2] - 20 November 24
+
+- Transaction status now shows pending if the transaction is not yet confirmed (3 or more confirmations)
+
 ##### [3.3.1] - 20 November 24
 
 - Extended the number of blocks in last 24 hours to 1900

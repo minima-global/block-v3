@@ -25,7 +25,7 @@ const InfoTable: React.FC<InfoTableProps> = ({ title, data, isLoading }) => (
         const notFirstRow = index !== 0
 
         return (
-          <Fragment key={row.label}>
+          <Fragment key={`${title}-${row.label}-${index}`}>
             {notFirstRow && (
               <div>
                 <div className="border-b border-grey40 dark:border-greyHighlight" />
