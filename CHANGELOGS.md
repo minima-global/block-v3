@@ -1,5 +1,9 @@
 # Changelog
 
+##### [3.2.4] - 13 November 24
+
+- The number of blocks in the last 24 hours is now dynamically fetched
+
 ##### [3.2.3] - 1 November 24
 
 - Fixed missing category in dapp.conf

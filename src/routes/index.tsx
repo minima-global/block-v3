@@ -13,7 +13,7 @@ export const Route = createFileRoute('/')({
 })
 
 function Index() {
-  const { topBlock, totalSupply, transactionsInLast24Hours } =
+  const { topBlock, totalSupply, transactionsInLast24Hours, blocksInLast24Hours } =
     useContext(appContext)
 
   const DISPLAYED_STATS = [
@@ -107,8 +107,8 @@ function Index() {
         </svg>
       ),
       title: 'Number of blocks in the last day',
-      value: `1720 blocks`,
-      isLoading: false,
+      value: `${blocksInLast24Hours} blocks`,
+      isLoading: blocksInLast24Hours === null,
     },
   ]
 

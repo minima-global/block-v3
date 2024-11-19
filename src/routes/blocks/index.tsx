@@ -19,7 +19,7 @@ export const Route = createFileRoute('/blocks/')({
 })
 
 function Index() {
-  const { topBlock } = useContext(appContext)
+  const { topBlock, blocksInLast24Hours } = useContext(appContext)
   const [isFetching, setIsFetching] = useState(true)
   const [page, setPage] = useState(1)
   const [data, setData] = useState<TxPow[]>([])
@@ -87,7 +87,8 @@ function Index() {
         </svg>
       ),
       title: 'Number of blocks in the last day',
-      value: `1720 Blocks`,
+      value: `${blocksInLast24Hours} blocks`,
+      isLoading: blocksInLast24Hours === null,
     },
     {
       id: 'average_block_time',

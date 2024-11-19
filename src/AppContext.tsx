@@ -5,6 +5,7 @@ import {
   useState,
   SetStateAction,
 } from 'react'
+import getBlockCountForLast24Hours from './utils/getNumberOfBlocksInLastDay'
 
 export const appContext = createContext<{
   topBlock: string | null
@@ -12,18 +13,21 @@ export const appContext = createContext<{
   loaded: boolean
   hamburgerOpen: boolean
   transactionsInLast24Hours: number | null
+  blocksInLast24Hours: number | null
   setHamburgerOpen: React.Dispatch<SetStateAction<boolean>>
 }>({
   totalSupply: null,
   topBlock: null,
   loaded: false,
   hamburgerOpen: false,
+  blocksInLast24Hours: 1720,
   transactionsInLast24Hours: null,
   setHamburgerOpen: () => null,
 })
 
 // eslint-disable-next-line
 const MDS = (window as any).MDS
+
 
 const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const loaded = useRef(false)
@@ -32,6 +36,7 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [hamburgerOpen, setHamburgerOpen] = useState<boolean>(false)
   const [transactionsInLast24Hours, setTransactionsInLast24Hours] =
     useState(null)
+  const [blocksInLast24Hours, setBlocksInLast24Hours] = useState<number | null>(null)
 
   useEffect(() => {
     if (!loaded.current) {
@@ -42,6 +47,12 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           MDS.cmd('status', (res) => {
             setTopBlock(res.response.chain.block)
             setTotalSupply(Number(res.response.minima).toFixed(0))
+
+            getBlockCountForLast24Hours(res.response.chain.block).then((blocks) => {
+              setBlocksInLast24Hours(blocks)
+            }).catch(() => {
+              setBlocksInLast24Hours(1720)
+            })
           })
 
           MDS.cmd('history action:transactions depth:1720', (res) => {
@@ -65,6 +76,7 @@ const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         setHamburgerOpen,
         transactionsInLast24Hours,
         loaded: loaded.current,
+        blocksInLast24Hours,
       }}
     >
       {children}
