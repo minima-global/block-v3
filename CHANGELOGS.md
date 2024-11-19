@@ -1,5 +1,9 @@
 # Changelog
 
+##### [3.3.3] - 20 November 24
+
+- Transaction confirmations now show if the transaction is on chain and pending or unconfirmed
+
 ##### [3.3.2] - 20 November 24
 
 - Transaction status now shows pending if the transaction is not yet confirmed (3 or more confirmations)
