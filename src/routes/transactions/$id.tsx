@@ -2,7 +2,7 @@ import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import Title from '../../Components/Title.tsx'
 import Section from '../../Components/Section.tsx'
 import { Fragment, useContext, useEffect, useState } from 'react'
-import { checkTransactionConfirmation, txPowById } from '../../__minima__'
+import { txPowById } from '../../__minima__'
 import ArrowBack from '../../Components/ArrowBack.tsx'
 import InfoTable from '../../Components/InfoTable.tsx'
 import { getTextSnippet } from '../../utils'
@@ -26,16 +26,6 @@ function Index() {
   const [data, setData] = useState<TxPow | null>(null)
   const [showView, setShowView] = useState('Details')
 
-  const [isFetchingConfirmed, setIsFetchingConfirmed] = useState(true)
-  const [isConfirmed, setIsConfirmed] = useState<
-    | {
-        block: string
-        txnId: string
-        blockTxnId: string
-      }
-    | undefined
-  >(undefined)
-
   useEffect(() => {
     if (id && loaded) {
       txPowById(id)
@@ -48,19 +38,6 @@ function Index() {
         })
     }
   }, [id, loaded])
-
-  useEffect(() => {
-    if (data && loaded && !isConfirmed) {
-      checkTransactionConfirmation(Number(data.header.block), data.txpowid)
-        .then((response) => {
-          setIsConfirmed(response)
-          setIsFetchingConfirmed(false)
-        })
-        .catch(() => {
-          setIsFetchingConfirmed(false)
-        })
-    }
-  }, [id, data, loaded])
 
   const TABS = [
     {
@@ -93,7 +70,7 @@ function Index() {
       </Section>
       <Title title={`Txn ID. ${getTextSnippet(id)}`} />
       <Section className="-mt-4 mb-4 text-black lg:-mt-8 lg:mb-10 dark:text-grey80">
-        {!isFetchingConfirmed && isConfirmed && (
+        {data?.onChain && data.onChain && (
           <div className="flex items-center gap-2">
             <div className="flex w-fit items-center gap-3 border px-3 py-1.5 text-xs lg:text-sm dark:border-green-900 dark:bg-green-900 dark:bg-opacity-20">
               <span>Status:</span>
@@ -113,7 +90,7 @@ function Index() {
 
               <span className="text-black dark:text-white">Confirmed</span>
             </div>
-            <Link to={`/blocks/$id`} params={{ id: isConfirmed.blockTxnId }}>
+            <Link to={`/blocks/$id`} params={{ id: data.onChain.blockid }}>
               <div className="flex w-fit items-center gap-3 border py-1.5 pl-3 pr-2.5 text-sm dark:border-mediumDarkContrast dark:bg-mediumDarkContrast dark:bg-opacity-50">
                 <svg
                   width="18"
@@ -125,7 +102,7 @@ function Index() {
                 >
                   <path d="M9 19.7115L0.25 14.8557V5.1442L9 0.288452L17.75 5.1442V14.8557L9 19.7115ZM6.148 7.5577C6.51217 7.14487 6.941 6.8237 7.4345 6.5942C7.92817 6.3647 8.45 6.24995 9 6.24995C9.55 6.24995 10.0718 6.3647 10.5655 6.5942C11.059 6.8237 11.4878 7.14487 11.852 7.5577L15.4098 5.57495L9 2.01145L2.59025 5.57495L6.148 7.5577ZM8.25 17.573V13.6827C7.36917 13.4877 6.649 13.048 6.0895 12.3635C5.52983 11.6788 5.25 10.891 5.25 9.99995C5.25 9.79745 5.26317 9.60737 5.2895 9.4297C5.31567 9.2522 5.36017 9.07045 5.423 8.88445L1.75 6.82695V13.9692L8.25 17.573ZM9 12.25C9.627 12.25 10.1588 12.0317 10.5953 11.5952C11.0317 11.1587 11.25 10.627 11.25 9.99995C11.25 9.37295 11.0317 8.8412 10.5953 8.4047C10.1588 7.9682 9.627 7.74995 9 7.74995C8.373 7.74995 7.84125 7.9682 7.40475 8.4047C6.96825 8.8412 6.75 9.37295 6.75 9.99995C6.75 10.627 6.96825 11.1587 7.40475 11.5952C7.84125 12.0317 8.373 12.25 9 12.25ZM9.75 17.573L16.25 13.9692V6.82695L12.577 8.88445C12.6398 9.07045 12.6843 9.2522 12.7105 9.4297C12.7368 9.60737 12.75 9.79745 12.75 9.99995C12.75 10.891 12.4702 11.6788 11.9105 12.3635C11.351 13.048 10.6308 13.4877 9.75 13.6827V17.573Z"></path>
                 </svg>
-                Block {isConfirmed.block}
+                Block {data.onChain.block}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -145,7 +122,7 @@ function Index() {
             </Link>
           </div>
         )}
-        {!isFetchingConfirmed && !isConfirmed && (
+        {data && !data.onChain && (
           <div className="flex w-fit items-center gap-3 border px-3 py-1.5 text-xs lg:text-sm dark:border-yellow-900 dark:bg-yellow-900 dark:bg-opacity-20">
             <span>Status:</span>
             <svg
@@ -162,7 +139,7 @@ function Index() {
             <span className="text-black dark:text-white">Pending</span>
           </div>
         )}
-        {isFetchingConfirmed && <div className="skele h-[34px] w-[300px]" />}
+        {!data && <div className="skele h-[34px] w-[300px]" />}
       </Section>
       <Section className="mt-8">
         <h5 className="mb-4 text-xl text-orange dark:text-lightOrange">
@@ -190,21 +167,19 @@ function Index() {
                   },
                   {
                     title: 'Inputs',
-                    value: `${data?.body?.txn.inputs.length} input${
-                      data?.body?.txn.inputs.length &&
-                      data?.body?.txn.inputs.length > 1
+                    value: `${data?.body?.txn.inputs.length} input${data?.body?.txn.inputs.length &&
+                        data?.body?.txn.inputs.length > 1
                         ? 's'
                         : ''
-                    }`,
+                      }`,
                   },
                   {
                     title: 'Outputs',
-                    value: `${data?.body?.txn.outputs.length} output${
-                      data?.body?.txn.outputs.length &&
-                      data?.body?.txn.outputs.length > 1
+                    value: `${data?.body?.txn.outputs.length} output${data?.body?.txn.outputs.length &&
+                        data?.body?.txn.outputs.length > 1
                         ? 's'
                         : ''
-                    }`,
+                      }`,
                   },
                 ]}
               />
@@ -324,29 +299,29 @@ function Index() {
                 isLoading={isFetching}
                 data={
                   data?.body?.witness.scripts &&
-                  data?.body?.witness.scripts.length > 0
+                    data?.body?.witness.scripts.length > 0
                     ? [
-                        ...(data &&
-                          // eslint-disable-next-line no-unsafe-optional-chaining
-                          data.body?.witness.scripts.map((txn) => [
-                            {
-                              label: 'Script',
-                              value: txn.script,
-                              valueClassName:
-                                'text-md text-black dark:text-white',
-                            },
-                            {
-                              label: 'Address',
-                              value: txn.address,
-                              copyable: true,
-                            },
-                          ])),
-                      ].flat()
+                      ...(data &&
+                        // eslint-disable-next-line no-unsafe-optional-chaining
+                        data.body?.witness.scripts.map((txn) => [
+                          {
+                            label: 'Script',
+                            value: txn.script,
+                            valueClassName:
+                              'text-md text-black dark:text-white',
+                          },
+                          {
+                            label: 'Address',
+                            value: txn.address,
+                            copyable: true,
+                          },
+                        ])),
+                    ].flat()
                     : [
-                        {
-                          label: 'There are no scripts for this transaction',
-                        },
-                      ]
+                      {
+                        label: 'There are no scripts for this transaction',
+                      },
+                    ]
                 }
               />
               <div>

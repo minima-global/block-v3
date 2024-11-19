@@ -194,10 +194,11 @@ function Index() {
             </div>
           )}
           {!isFetching &&
-            data?.map(({ txpowid, header, body }) => (
+            data?.map(({ txpowid, header, body, onChain }) => (
               <Link
                 key={txpowid}
                 to={`/transactions/${txpowid}`}
+                onClick={() => window.scrollTo(0, 0)}
                 className="grid w-full grid-cols-24 rounded bg-grey10 p-3 px-4 text-sm transition-colors hover:bg-grey20 dark:bg-darkContrast dark:text-grey20 hover:dark:bg-mediumDarkContrast"
               >
                 <div
@@ -246,14 +247,16 @@ function Index() {
                 <div
                   className={`${columnClassNames[3]} ${colourColumnBodyClassNames[3]} items-center tabular-nums lg:flex`}
                 >
-                  {header.block}
+                  {onChain ? onChain.block : header.block}
+                  {onChain && onChain.block !== header.block && '⚠️'}
+                  {onChain ? '🟢' : '🔴'}
                 </div>
                 <div
                   className={`${columnClassNames[4]} ${colourColumnBodyClassNames[4]} items-center`}
                 >
                   <div className="flex flex-col">
-                    {[...body.txn.inputs.slice(0, 2)].map((input) => (
-                      <div key={input.address} className="relative">
+                    {[...body.txn.inputs.slice(0, 2)].map((input, index) => (
+                      <div key={`input-${input.address}-${input.amount}-1-${index}`} className="relative">
                         <div className="hover cursor-pointer">
                           {getTextSnippet(input.address)}
                         </div>
@@ -315,8 +318,8 @@ function Index() {
                 >
                   <div className="flex">
                     <div className="flex flex-col">
-                      {[...body.txn.outputs.slice(0, 2)].map((output) => (
-                        <div key={output.address} className="relative">
+                      {[...body.txn.outputs.slice(0, 2)].map((output, index) => (
+                        <div key={`output-${output.address}-${output.amount}-1-${index}`} className="relative">
                           <div className="hover cursor-pointer">
                             {getTextSnippet(output.address)}
                           </div>
@@ -354,9 +357,9 @@ function Index() {
                   className={`${columnClassNames[7]} ${colourColumnBodyClassNames[7]} items-center justify-end tabular-nums`}
                 >
                   <div>
-                    {[...body.txn.outputs.slice(0, 2)].map((output) => (
+                    {[...body.txn.outputs.slice(0, 2)].map((output, index) => (
                       <div
-                        key={output.amount}
+                        key={`output-${output.address}-${output.amount}-2-${index}`}
                         className="relative block text-right"
                       >
                         <div className="hover cursor-pointer">

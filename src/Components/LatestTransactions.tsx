@@ -32,6 +32,7 @@ const LatestTransctions = () => {
     }
   }, [topBlock, isFetching, loaded])
 
+
   return (
     <div className="col-span-3 rounded bg-grey10 p-4 text-black lg:px-5 lg:py-6 dark:bg-darkContrast dark:text-grey20">
       <div className="grid grid-cols-12">
@@ -59,7 +60,7 @@ const LatestTransctions = () => {
               />
             ))}
         {!isFetching &&
-          data.map(({ txpowid, header, body }) => (
+          data.map(({ txpowid, header, body, onChain }) => (
             <Link
               key={txpowid}
               to={`/transactions/${txpowid}`}
@@ -68,7 +69,9 @@ const LatestTransctions = () => {
             >
               <div className="col-span-7 lg:col-span-4">
                 <div className="mb-0.5 text-sm tabular-nums text-orange dark:text-lightOrange">
-                  {header.block}
+                  {onChain ? onChain.block : header.block}
+                  {onChain && onChain.block !== header.block && '⚠️'}
+                  {onChain ? '🟢' : '🔴'}
                 </div>
                 <div className="relative">
                   <div className="hover cursor-pointer text-xs">
@@ -97,7 +100,7 @@ const LatestTransctions = () => {
                 <div>
                   {[...body.txn.outputs.slice(0, 2)].map((output) => (
                     <div
-                      key={output.amount}
+                      key={`output-${output.amount}-1`}
                       className="relative block text-right text-xs tabular-nums"
                     >
                       <div className="hover cursor-pointer">

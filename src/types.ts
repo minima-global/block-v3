@@ -1,5 +1,6 @@
 export interface MDSResponse<T> {
   status: boolean
+  params: Record<string, string>
   response: T
 }
 
@@ -20,6 +21,7 @@ export interface TxPow {
   header: Header
   hasbody: boolean
   body: Body
+  onChain?: TxPowOnChain
 }
 
 export interface Header {
@@ -171,4 +173,13 @@ export interface Burnwitness {
   signatures: Signature[]
   mmrproofs: MMRProof[]
   scripts: Script[]
+}
+
+
+export type TxPowOnChain = {
+  block: string;
+  blockid: string
+  confirmations: string
+  found: boolean
+  tip: string
 }

@@ -1,4 +1,4 @@
-import { Block, MDSResponse, TxPow } from '../types.ts'
+import { Block, MDSResponse, TxPow, TxPowOnChain } from '../types.ts'
 
 // eslint-disable-next-line
 const MDS = (window as any).MDS
@@ -19,10 +19,16 @@ export function txPowById(id: number | string): Promise<TxPow> {
   return new Promise((resolve, reject) => {
     MDS.cmd(`txpow txpowid:${id}`, function (response: MDSResponse<TxPow>) {
       if (response.status) {
-        return resolve(response.response)
-      }
+        MDS.cmd(`txpow onchain:${response.response.txpowid}`, (onChainResponse: MDSResponse<TxPowOnChain>) => {
+          if (onChainResponse.status && onChainResponse.response.found) {
+            response.response.onChain = onChainResponse.response;
+          }
 
-      return reject()
+          resolve(response.response)
+        })
+      } else {
+        return reject()
+      }
     })
   })
 }
@@ -54,6 +60,21 @@ export function txPowByAddress(address: string): Promise<TxPow | TxPow[]> {
   })
 }
 
+export function txPowOnChain(command: string): Promise<MDSResponse<TxPowOnChain>[]> {
+  return new Promise((resolve, reject) => {
+    MDS.cmd(
+      command,
+      function (response: MDSResponse<TxPowOnChain>[]) {
+        if (response[0].status) {
+          return resolve(response)
+        }
+
+        return reject()
+      }
+    )
+  })
+}
+
 export function getManyTxPow(from: number, amount = 30): Promise<TxPow[]> {
   const promises: Promise<TxPow>[] = []
 
@@ -67,6 +88,7 @@ export function getManyTxPow(from: number, amount = 30): Promise<TxPow[]> {
 
   return Promise.all(promises)
 }
+
 
 export function getManyTxPowFindOrFail(
   from: number,
@@ -127,7 +149,10 @@ export async function getLatestTransactions(): Promise<TxPow[]> {
     loop += 1
   }
 
-  return transactions
+  // Checks if transactions are on chain, adds onChain property to each transaction if it is found
+  const updatedTransactions = getOnChainTransaction(transactions);
+
+  return updatedTransactions
 }
 
 export async function getBlocks(
@@ -174,7 +199,29 @@ export async function getTransactions(
     loop += 1
   }
 
-  return { transactions, count: count + 1 }
+  // Checks if transactions are on chain, adds onChain property to each transaction if it is found
+  const updatedTransactions = await getOnChainTransaction(transactions);
+
+  return { transactions: updatedTransactions, count: count + 1 }
+}
+
+async function getOnChainTransaction(transactions: TxPow[]) {
+  const command: string[] = [];
+
+  transactions.forEach((tx) => {
+    command.push(`txpow onchain:${tx.txpowid}`)
+  });
+  const onChainTransactions = await txPowOnChain(command.join(';'))
+
+  transactions.forEach((tx) => {
+    const onChainTransaction = onChainTransactions.find((onChainTx) => onChainTx.params.onchain === tx.txpowid && onChainTx.response.found)
+
+    if (onChainTransaction) {
+      tx.onChain = onChainTransaction.response;
+    }
+  })
+
+  return transactions;
 }
 
 export async function checkTransactionConfirmation(
@@ -182,10 +229,10 @@ export async function checkTransactionConfirmation(
   txpowid: string
 ): Promise<
   | {
-      block: string
-      blockTxnId: string
-      txnId: string
-    }
+    block: string
+    blockTxnId: string
+    txnId: string
+  }
   | undefined
 > {
   return new Promise((resolve, reject) => {

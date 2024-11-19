@@ -12,8 +12,8 @@ async function getBlockCountForLast24Hours(topblock: number) {
     let block = 1685;
     let found: number | null = null;
 
-
     while (found === null) {
+        console.log(block);
         const txPowTimeMilli = await getTxPowTimeMilli(topblock - block);
 
         if (isBefore(new Date(Number(txPowTimeMilli)), subDays(new Date(), 1))) {
@@ -21,8 +21,8 @@ async function getBlockCountForLast24Hours(topblock: number) {
             break;
         }
 
-        if (block >= 1740) {
-            break;
+        if (block >= 1900) {
+            throw Error("Could not find block count");
         }
 
         block = block + 1;

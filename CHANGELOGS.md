@@ -1,5 +1,13 @@
 # Changelog
 
+##### [3.3.1] - 20 November 24
+
+- Extended the number of blocks in last 24 hours to 1900
+
+##### [3.3.0] - 20 November 24
+
+- Transaction block numbers now show the block number when the transaction is on chain
+
 ##### [3.2.4] - 13 November 24
 
 - The number of blocks in the last 24 hours is now dynamically fetched
