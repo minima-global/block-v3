@@ -1,5 +1,10 @@
 # Changelog
 
+##### [3.3.4] - 22 November 24
+
+- Removed secondary title bar
+- Refreshing on the transaction page now works
+
 ##### [3.3.3] - 20 November 24
 
 - Transaction confirmations now show if the transaction is on chain and pending or unconfirmed

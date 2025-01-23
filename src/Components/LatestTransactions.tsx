@@ -70,8 +70,6 @@ const LatestTransctions = () => {
               <div className="col-span-7 lg:col-span-4">
                 <div className="mb-0.5 text-sm tabular-nums text-orange dark:text-lightOrange">
                   {onChain ? onChain.block : header.block}
-                  {onChain && onChain.block !== header.block && '⚠️'}
-                  {onChain ? '🟢' : '🔴'}
                 </div>
                 <div className="relative">
                   <div className="hover cursor-pointer text-xs">
@@ -98,9 +96,9 @@ const LatestTransctions = () => {
               </div>
               <div className="col-span-4 hidden items-center justify-end lg:flex">
                 <div>
-                  {[...body.txn.outputs.slice(0, 2)].map((output) => (
+                  {[...body.txn.outputs.slice(0, 2)].map((output, index) => (
                     <div
-                      key={`output-${output.amount}-1`}
+                      key={`output-${output.amount}-1-${index}`}
                       className="relative block text-right text-xs tabular-nums"
                     >
                       <div className="hover cursor-pointer">

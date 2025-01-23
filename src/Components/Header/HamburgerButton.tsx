@@ -6,9 +6,14 @@ type HamburgerProps = {
 }
 
 const HamburgerButton: React.FC<HamburgerProps> = ({ isOpen, toggle }) => {
+  const handleOnClick = (evt: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => {
+    evt.stopPropagation();
+    toggle();
+  }
+
   return (
     <div className="relative -mt-1 h-[40px] w-[40px]">
-      <div className="absolute -mt-[4px] h-[50px] w-[55px]" onClick={toggle} />
+      <div className="absolute -mt-[4px] h-[50px] w-[55px]" onClick={handleOnClick} />
       <div className="absolute left-[-40px] top-[-22px]">
         <MotionConfig
           transition={{
@@ -18,7 +23,7 @@ const HamburgerButton: React.FC<HamburgerProps> = ({ isOpen, toggle }) => {
         >
           <motion.button
             initial={false}
-            onClick={toggle}
+            onClick={handleOnClick}
             className="relative h-20 w-20"
             animate={isOpen ? 'open' : 'closed'}
           >

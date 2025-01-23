@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import HamburgerButton from './HamburgerButton.tsx'
 import { appContext } from '../../AppContext.tsx'
+import useAndroidShowTitleBar from '../TitleBar/useAndroidShowTitlebar';
 
 const HEADER_NAV = [
   {
@@ -21,8 +22,8 @@ const HEADER_NAV = [
 const Header = () => {
   const pathName = '___'
   const { topBlock, hamburgerOpen, setHamburgerOpen } = useContext(appContext)
-  const toggle = () => setHamburgerOpen((prevState) => !prevState)
   const [isAtTop, setIsAtTop] = useState(true)
+  const openTitleBar = useAndroidShowTitleBar();
 
   useEffect(() => {
     const onScroll = () => {
@@ -44,7 +45,13 @@ const Header = () => {
     }
   }, [hamburgerOpen])
 
-  const toggleDarkMode = () => {
+  const toggle = () => {
+    setHamburgerOpen((prevState) => !prevState);
+  }
+
+  const toggleDarkMode = (evt: React.MouseEvent<HTMLLIElement>) => {
+    evt.stopPropagation();
+
     document.body.classList.remove('bg-background')
 
     if (document.body.classList.contains('dark')) {
@@ -59,13 +66,11 @@ const Header = () => {
       'darkMode',
       (!!document.body.classList.contains('dark')).toString()
     )
-
-    // setDarkMode(document.body.classList.contains('dark'))
   }
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-[64px]">
+      <header className="sticky top-0 z-50 h-[64px]" onClick={openTitleBar}>
         <div
           className={`${isAtTop ? 'h-[84px]' : 'h-[40px]'} border-[hsla(0, 0%, 100%, 1)] flex h-[64px] items-center border-b bg-white px-5 transition-all dark:border-lightDarkContrast dark:bg-black`}
         >
@@ -121,7 +126,7 @@ const Header = () => {
                           key={title}
                           className={`w-full transition-all duration-300 ${isOnPage ? 'text-orange dark:text-lightOrange' : 'text-black dark:text-white dark:hover:text-grey40'}`}
                         >
-                          <Link to={href}>{title}</Link>
+                          <Link to={href} onClick={(evt) => evt.stopPropagation()}>{title}</Link>
                         </li>
                       )
                     })}
@@ -181,7 +186,10 @@ const Header = () => {
                     >
                       <Link
                         to={href}
-                        onClick={toggle}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggle();
+                        }}
                         className="block w-full px-5 py-4"
                       >
                         {title}

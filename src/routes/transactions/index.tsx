@@ -25,25 +25,18 @@ function Index() {
   const [page, setPage] = useState(1)
   const [data, setData] = useState<TxPow[]>([])
   const [perPage, setPerPage] = useState(10)
-  const { transactionsInLast24Hours } = useContext(appContext)
+  const { loaded, transactionsInLast24Hours } = useContext(appContext)
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'instant',
-    })
-
-    getTransactions(perPage, lastOffset[page] || 0)
-      .then((response) => {
-        setData(response.transactions)
-        lastOffset[page + 1] = response.count + (lastOffset[page] || 0)
-        setIsFetching(false)
-      })
-      .catch(() => {
-        setIsFetching(false)
-      })
-  }, [page, perPage])
+    if (loaded) {
+      getTransactions(perPage, lastOffset[page] || 0)
+        .then((response) => {
+          setData(response.transactions)
+          lastOffset[page + 1] = response.count + (lastOffset[page] || 0)
+          setIsFetching(false)
+        })
+    }
+  }, [page, perPage, loaded])
 
   const DISPLAYED_STATS = [
     {
@@ -248,8 +241,6 @@ function Index() {
                   className={`${columnClassNames[3]} ${colourColumnBodyClassNames[3]} items-center tabular-nums lg:flex`}
                 >
                   {onChain ? onChain.block : header.block}
-                  {onChain && onChain.block !== header.block && '⚠️'}
-                  {onChain ? '🟢' : '🔴'}
                 </div>
                 <div
                   className={`${columnClassNames[4]} ${colourColumnBodyClassNames[4]} items-center`}
